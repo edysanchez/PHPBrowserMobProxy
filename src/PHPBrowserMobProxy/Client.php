@@ -14,14 +14,18 @@
  */
 class PHPBrowserMobProxy_Client
 {
+    protected $proxy;
+
     /**
      * Class constructor
      *
      * @param string $url URL for BrowserMobProxy instance
+     * @param string $proxy Proxy which BrowserMobProxy should use outbound eg 11.22.33.44:80
      */
-    public function __construct($url)
+    public function __construct($url, $proxy = null)
     {
         $this->browsermob_url = $url;
+        $this->proxy = $proxy;
     }
 
     /**
@@ -34,7 +38,10 @@ class PHPBrowserMobProxy_Client
         $parts = parse_url($this->browsermob_url);
         $this->hostname = $parts["host"];
 
-        $response = Requests::post("http://" . $this->browsermob_url . "/proxy/");
+        $response = Requests::post(
+            "http://" . $this->browsermob_url . "/proxy"
+            .(!empty($this->proxy) ? '?httpProxy='.$this->proxy : '/')
+        );
 
         $decoded = json_decode($response->body, true);
         if ($decoded) {
