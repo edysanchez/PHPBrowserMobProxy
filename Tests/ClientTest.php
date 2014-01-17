@@ -4,7 +4,7 @@ require '../vendor/autoload.php';
 /**
  * Tests BrowserMobProxy Client
  *
- * @class ServerTest
+ * @class ClientTest
  * @category Testing
  * @package  PHPBrowserMobProxy
  * @author   Adam Goucher <adam@element34.ca>
@@ -12,7 +12,7 @@ require '../vendor/autoload.php';
  * @license  Apache 2.0
  * @link     https://github.com/chartjes/PHPBrowserMobProxy
  */
-class ServerTest extends PHPUnit_Framework_TestCase
+class ClientTest extends PHPUnit_Framework_TestCase
 {
     /**
      * Setup method
@@ -255,5 +255,17 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $response = $this->client->retry(3);
         $this->assertEquals($response->status_code, 200);
     }
+
+    /**
+     * Test we can define the port of the proxy instance
+     *
+     * @return void
+     */
+    public function testInstancePort()
+    {
+        $this->client = new PHPBrowserMobProxy_Client("localhost:8080", null, "9999");
+        $this->client->open();
+        $this->assertEquals('localhost:9999', $this->client->url);
+    }
 }
-?>
+

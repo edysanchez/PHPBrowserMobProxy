@@ -15,17 +15,20 @@
 class PHPBrowserMobProxy_Client
 {
     protected $proxy;
+    protected $instance_port;
 
     /**
      * Class constructor
      *
      * @param string $url URL for BrowserMobProxy instance
-     * @param string $proxy Proxy which BrowserMobProxy should use outbound eg 11.22.33.44:80
+     * @param string $proxy BrowserMobProxy traffic routed through this Http proxy outbound eg 11.22.33.44:80
+     * @param string $instance_port Define custom Proxy port created by BrowserMobProxy eg 9999
      */
-    public function __construct($url, $proxy = null)
+    public function __construct($url, $proxy = null, $instance_port = null)
     {
         $this->browsermob_url = $url;
         $this->proxy = $proxy;
+        $this->instance_port = $instance_port;
     }
 
     /**
@@ -37,16 +40,20 @@ class PHPBrowserMobProxy_Client
     {
         $parts = parse_url($this->browsermob_url);
         $this->hostname = $parts["host"];
-
+        $headers = array();
+        $data = '';
+        if (!empty($this->instance_port)) {
+            $data = 'port='.$this->instance_port;
+        }
         $response = Requests::post(
             "http://" . $this->browsermob_url . "/proxy"
-            .(!empty($this->proxy) ? '?httpProxy='.$this->proxy : '/')
+            .(!empty($this->proxy) ? '?httpProxy='.$this->proxy : '/'),
+            $headers,
+            $data
         );
 
         $decoded = json_decode($response->body, true);
-        if ($decoded) {
-            $this->port = $decoded["port"];
-        }
+        $this->port = ($decoded ? $decoded["port"] : $this->instance_port);
         $this->url = $this->hostname . ":" . $this->port;
     }
 
@@ -433,4 +440,3 @@ class PHPBrowserMobProxy_Client
         return $response;
     }
 }
-?>
