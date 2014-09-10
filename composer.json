@@ -1,5 +1,5 @@
 {
-  "name": "chartjes/php-browsermob-proxy",
+  "name": "edysanchez/php-browsermob-proxy",
   "type": "library",
   "description": "Library for using browsermob-proxy with PHP projects",
   "keywords": ["testing"],
