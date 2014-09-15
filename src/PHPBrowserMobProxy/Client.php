@@ -129,8 +129,7 @@ class PHPBrowserMobProxy_Client
      */
     public function newHar($label = '', $captureHeaders = false)
     {
-        $data = "initialPageRef=" . $label;
-        $data .= "?captureHeaders=". ($captureHeaders ? "true" : "false");
+        $data = ["initialPageRef"=>  $label, 'captureHeaders'=>($captureHeaders ? "true" : "false")];
         $url = "http://{$this->browsermob_url}/proxy/{$this->port}/har";
         $response = Requests::put(
             $url,
